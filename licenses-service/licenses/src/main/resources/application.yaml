@@ -1,0 +1,6 @@
+logging:
+  level:
+    com.anarodriguez: debug
+
+csv:
+  location: '/home/anita/Downloads/licenses.csv'
