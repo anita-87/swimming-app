@@ -4,10 +4,12 @@ import com.anarodriguez.licenses.enums.Gender;
 import com.anarodriguez.licenses.enums.LicenceType;
 import com.anarodriguez.licenses.mappers.LicenceCsvMapper;
 import com.anarodriguez.licenses.models.Profile;
+import com.anarodriguez.licenses.repositories.ProfileRepository;
 import com.fasterxml.jackson.databind.MappingIterator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,12 +26,16 @@ import java.util.List;
 
 
 @Component
+@RequiredArgsConstructor
 public class LoadDataCommandLineRunner implements CommandLineRunner {
-
-    private final Logger logger = LoggerFactory.getLogger(LoadDataCommandLineRunner.class);
 
     @Value("${csv.location}")
     private String csvFile;
+
+    private final Logger logger = LoggerFactory.getLogger(LoadDataCommandLineRunner.class);
+
+    private final ProfileRepository profileRepository;
+
     @Override
     public void run(String... args) throws Exception {
         logger.debug("Loading profiles from external path");
@@ -39,7 +45,8 @@ public class LoadDataCommandLineRunner implements CommandLineRunner {
             return;
         }
         List<Profile> profiles = getProfiles(it);
-        profiles.forEach(p -> logger.info(p.toString()));
+        logger.info("Read " + profiles.size() + " profiles from the CSV file");
+        profileRepository.saveAll(profiles).subscribe();
     }
 
     private MappingIterator<LicenceCsvMapper> readCsvFile(String fileName) throws IOException {
@@ -63,6 +70,7 @@ public class LoadDataCommandLineRunner implements CommandLineRunner {
             List<LicenceType> licences = new ArrayList<>();
             licences.add(LicenceType.fromString(p.getPosition()));
             profiles.add(Profile.builder()
+                    .dni(p.getDni())
                     .firstName(p.getFirstName())
                     .lastName(p.getLastName())
                     .gender(Gender.fromString(p.getSex()))
