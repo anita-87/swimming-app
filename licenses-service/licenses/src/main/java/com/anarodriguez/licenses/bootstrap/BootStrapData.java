@@ -1,4 +1,4 @@
-package com.anarodriguez.licenses.components;
+package com.anarodriguez.licenses.bootstrap;
 
 import com.anarodriguez.licenses.enums.Gender;
 import com.anarodriguez.licenses.enums.LicenceType;
@@ -22,17 +22,19 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 @Component
 @RequiredArgsConstructor
-public class LoadDataCommandLineRunner implements CommandLineRunner {
+public class BootStrapData implements CommandLineRunner {
 
     @Value("${csv.location}")
     private String csvFile;
 
-    private final Logger logger = LoggerFactory.getLogger(LoadDataCommandLineRunner.class);
+    private final Logger logger = LoggerFactory.getLogger(BootStrapData.class);
 
     private final ProfileRepository profileRepository;
 
@@ -45,8 +47,9 @@ public class LoadDataCommandLineRunner implements CommandLineRunner {
             return;
         }
         List<Profile> profiles = getProfiles(it);
-        logger.info("Read " + profiles.size() + " profiles from the CSV file");
-        profileRepository.saveAll(profiles).subscribe();
+        logger.info("Obtained " + profiles.size() + " profiles after filtering the profiles read from the CSV file.");
+        this.profileRepository.saveAll(profiles)
+                .subscribe();
     }
 
     private MappingIterator<LicenceCsvMapper> readCsvFile(String fileName) throws IOException {
@@ -64,26 +67,41 @@ public class LoadDataCommandLineRunner implements CommandLineRunner {
     }
 
     private List<Profile> getProfiles(MappingIterator<LicenceCsvMapper> mappingIterator) {
-        List<Profile> profiles = new ArrayList<>();
+        Map<String, Profile> profiles = new HashMap<>();
+        int csvElements = 0;
         while (mappingIterator.hasNext()) {
+            csvElements++;
             LicenceCsvMapper p = mappingIterator.next();
-            List<LicenceType> licences = new ArrayList<>();
-            licences.add(LicenceType.fromString(p.getPosition()));
-            profiles.add(Profile.builder()
-                    .dni(p.getDni())
-                    .firstName(p.getFirstName())
-                    .lastName(p.getLastName())
-                    .gender(Gender.fromString(p.getSex()))
-                    .dateOfBirth(LocalDate.parse(p.getDateOfBirth()))
-                    .placeOfBirth(p.getPlaceOfBirth())
-                    .countryOfBirth(p.getCountryOfBirth())
-                    .phone(p.getPhone())
-                    .email(p.getEmail())
-                    .address(p.getAddress())
-                    .postalCode(p.getPostalCode())
-                    .licences(licences)
-                    .build());
+            Profile profile = buildProfile(p);
+            if (profiles.containsKey(p.getDni())) {
+                Profile savedProfile = profiles.get(p.getDni());
+                savedProfile.getLicences().addAll(profile.getLicences());
+                profiles.put(savedProfile.getDni(), savedProfile);
+            } else {
+                profiles.put(profile.getDni(), profile);
+            }
         }
-        return profiles;
+        logger.info("Read " + csvElements + " profiles from the CSV file");
+        return profiles.values().stream().toList();
     }
+
+    private Profile buildProfile(LicenceCsvMapper csvProfile) {
+        List<LicenceType> licences = new ArrayList<>();
+        licences.add(LicenceType.fromString(csvProfile.getPosition()));
+        return Profile.builder()
+                .dni(csvProfile.getDni())
+                .firstName(csvProfile.getFirstName())
+                .lastName(csvProfile.getLastName())
+                .gender(Gender.fromString(csvProfile.getSex()))
+                .dateOfBirth(LocalDate.parse(csvProfile.getDateOfBirth()))
+                .placeOfBirth(csvProfile.getPlaceOfBirth())
+                .countryOfBirth(csvProfile.getCountryOfBirth())
+                .phone(csvProfile.getPhone())
+                .email(csvProfile.getEmail())
+                .address(csvProfile.getAddress())
+                .postalCode(csvProfile.getPostalCode())
+                .licences(licences)
+                .build();
+    }
+
 }
