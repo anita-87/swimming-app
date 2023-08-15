@@ -29,12 +29,13 @@ import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
-public class BootStrapData implements CommandLineRunner {
+@org.springframework.context.annotation.Profile("!test")
+public class BootstrapData implements CommandLineRunner {
 
     @Value("${csv.location}")
     private String csvFile;
 
-    private final Logger logger = LoggerFactory.getLogger(BootStrapData.class);
+    private final Logger logger = LoggerFactory.getLogger(BootstrapData.class);
 
     private final ProfileRepository profileRepository;
 
