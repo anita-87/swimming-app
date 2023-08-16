@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
@@ -46,5 +47,16 @@ class ProfileControllerIT {
                 .expectStatus().isOk()
                 .expectHeader().valueEquals(CONTENT_TYPE_HEADER, CONTENT_TYPE_HEADER_JSON)
                 .expectBody().jsonPath("$.size()").isEqualTo(2);
+    }
+
+    @Test
+    void testListInvalidTypeProfile() {
+        webTestClient
+                .get().uri(ProfileController.PROFILE_BY_LICENCE_TYPE, "invalid")
+                .exchange()
+                .expectStatus().isBadRequest()
+                .expectBody()
+                .jsonPath("$.status").isEqualTo(HttpStatus.BAD_REQUEST.value())
+                .jsonPath("$.error").isEqualTo(HttpStatus.BAD_REQUEST.name());
     }
 }

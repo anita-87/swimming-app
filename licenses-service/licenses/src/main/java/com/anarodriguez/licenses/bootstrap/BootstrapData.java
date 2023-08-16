@@ -10,8 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -29,26 +28,25 @@ import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 @org.springframework.context.annotation.Profile("!test")
 public class BootstrapData implements CommandLineRunner {
 
     @Value("${csv.location}")
     private String csvFile;
 
-    private final Logger logger = LoggerFactory.getLogger(BootstrapData.class);
-
     private final ProfileRepository profileRepository;
 
     @Override
     public void run(String... args) throws Exception {
-        logger.debug("Loading profiles from external path");
+        log.debug("Loading profiles from external path");
         MappingIterator<LicenceCsvMapper> it = readCsvFile(csvFile);
         if (it == null) {
-            logger.warn("CSV file '"+ csvFile + "' not found. No profiles will be loaded.");
+            log.warn("CSV file '"+ csvFile + "' not found. No profiles will be loaded.");
             return;
         }
         List<Profile> profiles = getProfiles(it);
-        logger.info("Obtained " + profiles.size() + " profiles after filtering the profiles read from the CSV file.");
+        log.info("Obtained " + profiles.size() + " profiles after filtering the profiles read from the CSV file.");
         this.profileRepository.saveAll(profiles)
                 .subscribe();
     }
@@ -82,7 +80,7 @@ public class BootstrapData implements CommandLineRunner {
                 profiles.put(profile.getDni(), profile);
             }
         }
-        logger.info("Read " + csvElements + " profiles from the CSV file");
+        log.info("Read " + csvElements + " profiles from the CSV file");
         return profiles.values().stream().toList();
     }
 

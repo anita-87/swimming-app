@@ -5,8 +5,7 @@ import com.anarodriguez.licenses.enums.LicenceType;
 import com.anarodriguez.licenses.models.Profile;
 import com.anarodriguez.licenses.repositories.ProfileRepository;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -16,15 +15,15 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 @org.springframework.context.annotation.Profile("test")
 public class BootstrapDataTest implements CommandLineRunner {
 
-    private final Logger logger = LoggerFactory.getLogger(BootstrapDataTest.class);
     private final ProfileRepository profileRepository;
 
     @Override
     public void run(String... args) throws Exception {
-        logger.info("Saving profiles for testing");
+        log.info("Saving profiles for testing");
         profileRepository.deleteAll()
                 .thenMany(profileRepository.saveAll(BootstrapDataTest.setupProfiles()))
                 .subscribe();

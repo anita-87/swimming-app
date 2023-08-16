@@ -1,5 +1,7 @@
 package com.anarodriguez.licenses.enums;
 
+import com.anarodriguez.licenses.exceptions.InvalidLicenceTypeException;
+
 public enum LicenceType {
     COACH, MASTER, SWIMMING;
 
@@ -12,7 +14,7 @@ public enum LicenceType {
         }if (type.equals("Deportista") || type.equals("swim")) {
             return SWIMMING;
         } else {
-            throw new IllegalArgumentException("Invalid licence type '" + type +"'");
+            throw new InvalidLicenceTypeException(type);
         }
     }
 }
