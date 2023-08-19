@@ -7,21 +7,21 @@
 <mat-sidenav-container class="sidenav-container">
   <mat-sidenav #drawer mode="side" class="sidenav">
     <mat-nav-list>
-      <a mat-list-item href="#">
+      <a mat-list-item routerLink="/profiles/swim">
         <mat-icon matListItemIcon>groups</mat-icon>
         <div matListItemTitle>Swimmers</div>
       </a>
-      <a mat-list-item href="#">
+      <a mat-list-item routerLink="/profiles/master">
         <mat-icon matListItemIcon>groups</mat-icon>
         <div matListItemTitle>Masters</div>
       </a>
-      <a mat-list-item href="#">
+      <a mat-list-item routerLink="/profiles/coach">
         <mat-icon matListItemIcon>groups</mat-icon>
         <div matListItemTitle>Coaches</div>
       </a>
     </mat-nav-list>
   </mat-sidenav>
   <mat-sidenav-content>
-    <router-outlet></router-outlet>
+      <router-outlet></router-outlet>
   </mat-sidenav-content>
 </mat-sidenav-container>
