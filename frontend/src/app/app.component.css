@@ -1,5 +1,5 @@
-.sidenav-container {
-  height: 100%;
+mat-sidenav-container {
+  padding: 18px;
 }
 
 .sidenav {
