@@ -82,7 +82,8 @@ class ProfileControllerTest {
                 .expectBody()
                 .consumeWith(System.out::println)
                 .jsonPath("$.size()").isEqualTo(1)
-                .jsonPath("$[0]['dni']").isEqualTo(coachProfile.getDni());
+                .jsonPath("$[0]['dni']").isEqualTo(coachProfile.getDni())
+        ;
     }
 
     private Profile getProfile(String dni, LicenceType... licenceType) {
