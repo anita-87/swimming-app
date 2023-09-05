@@ -42,7 +42,7 @@ class ProfileRepositoryTest {
 
     @Test
     void shouldReturnTwoCoachProfiles() {
-        Flux<Profile> coachProfiles = profileRepository.findAllByLicences(LicenceType.COACH);
+        Flux<Profile> coachProfiles = profileRepository.findAllByLicencesOrderByFirstName(LicenceType.COACH);
 
         StepVerifier
                 .create(coachProfiles)

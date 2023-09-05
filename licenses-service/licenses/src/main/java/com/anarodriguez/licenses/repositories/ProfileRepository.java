@@ -7,5 +7,5 @@ import reactor.core.publisher.Flux;
 
 public interface ProfileRepository extends ReactiveMongoRepository<Profile, String> {
 
-    Flux<Profile> findAllByLicences(LicenceType licenceType);
+    Flux<Profile> findAllByLicencesOrderByFirstName(LicenceType licenceType);
 }

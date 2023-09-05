@@ -15,6 +15,6 @@ public class ProfileServiceImpl implements ProfileService {
 
     @Override
     public Flux<Profile> listProfilesByLicenceType(LicenceType licenceType) {
-        return profileRepository.findAllByLicences(licenceType);
+        return profileRepository.findAllByLicencesOrderByFirstName(licenceType);
     }
 }
