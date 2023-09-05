@@ -47,7 +47,8 @@ public class BootstrapData implements CommandLineRunner {
         }
         List<Profile> profiles = getProfiles(it);
         log.info("Obtained " + profiles.size() + " profiles after filtering the profiles read from the CSV file.");
-        this.profileRepository.saveAll(profiles)
+        this.profileRepository.deleteAll()
+                .thenMany(this.profileRepository.saveAll(profiles))
                 .subscribe();
     }
 
