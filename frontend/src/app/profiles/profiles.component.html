@@ -1,6 +1,9 @@
 <h1>Profiles</h1>
 <mat-divider></mat-divider>
-<div class="example-container mat-elevation-z8">
+<div *ngIf="isLoading">
+  <mat-spinner mode="indeterminate"></mat-spinner>
+</div>
+<div class="mat-elevation-z8">
   <mat-form-field>
     <mat-label>Filter</mat-label>
     <input matInput (keyup)="applyFilter($event)" placeholder="Type something" #input>

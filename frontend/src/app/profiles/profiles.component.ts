@@ -16,6 +16,7 @@ export class ProfilesComponent {
   profiles: Profile[];
   dataSource: MatTableDataSource<Profile>;
   numOfProfiles = 0
+  isLoading = true;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
@@ -34,6 +35,7 @@ export class ProfilesComponent {
         this.profiles = profiles;
         this.dataSource =  new MatTableDataSource<Profile>(this.profiles.slice(0, 10));
         this.numOfProfiles = profiles.length;
+        this.isLoading = false;
       })
   }
 

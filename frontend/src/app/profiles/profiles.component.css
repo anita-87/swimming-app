@@ -5,7 +5,9 @@ mat-divider {
 table {
   width: 100%;
 }
-
+mat-spinner {
+  margin:0 auto;
+}
 .mat-mdc-form-field {
   font-size: 14px;
   width: 100%;
