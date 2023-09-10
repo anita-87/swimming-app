@@ -14,6 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -82,8 +83,36 @@ class ProfileControllerTest {
                 .expectBody()
                 .consumeWith(System.out::println)
                 .jsonPath("$.size()").isEqualTo(1)
-                .jsonPath("$[0]['dni']").isEqualTo(coachProfile.getDni())
-        ;
+                .jsonPath("$[0]['dni']").isEqualTo(coachProfile.getDni());
+    }
+
+    @Test
+    void testGetProfile() {
+        String dni = "71224455A";
+        Profile profile = getProfile(dni, LicenceType.MASTER);
+
+        given(profileService.getProfile(dni)).willReturn(Mono.just(profile));
+
+        webTestClient.get()
+                .uri(ProfileController.PROFILE_BY_DNI, dni)
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().valueEquals("Content-Type", MediaType.APPLICATION_JSON_VALUE)
+                .expectBody()
+                .consumeWith(System.out::println)
+                .jsonPath("$.dni").isEqualTo(dni)
+                .jsonPath("$.firstName").isEqualTo("Ana");
+    }
+
+    @Test
+    void testGetProfileNotFound() {
+        String dni = "71224455A";
+        given(profileService.getProfile(dni)).willReturn(Mono.empty());
+
+        webTestClient.get()
+                .uri(ProfileController.PROFILE_BY_DNI, dni)
+                .exchange()
+                .expectStatus().isNotFound();
     }
 
     private Profile getProfile(String dni, LicenceType... licenceType) {

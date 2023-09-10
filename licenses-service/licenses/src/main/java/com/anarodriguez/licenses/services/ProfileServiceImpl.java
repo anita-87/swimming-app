@@ -6,6 +6,7 @@ import com.anarodriguez.licenses.repositories.ProfileRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @Service
 @RequiredArgsConstructor
@@ -16,5 +17,10 @@ public class ProfileServiceImpl implements ProfileService {
     @Override
     public Flux<Profile> listProfilesByLicenceType(LicenceType licenceType) {
         return profileRepository.findAllByLicencesOrderByFirstName(licenceType);
+    }
+
+    @Override
+    public Mono<Profile> getProfile(String dni) {
+        return profileRepository.findByDni(dni);
     }
 }

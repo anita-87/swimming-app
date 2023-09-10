@@ -11,9 +11,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
+
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DataMongoTest
 @ExtendWith(SpringExtension.class)
@@ -50,4 +55,30 @@ class ProfileRepositoryTest {
                 .verifyComplete();
     }
 
+    @Test
+    void shouldReturnTheProfileByDNI() {
+        Mono<Profile> profile = profileRepository.findByDni("71224455A");
+
+        StepVerifier
+                .create(profile)
+                .assertNext(retrivedProfile -> {
+                    assertAll(
+                            "profileByDni",
+                            () -> assertEquals("71224455A", retrivedProfile.getDni()),
+                            () -> assertEquals("Ana", retrivedProfile.getFirstName()),
+                            () -> assertEquals(1, retrivedProfile.getLicences().size())
+                    );
+                })
+                .verifyComplete();
+    }
+
+    @Test
+    void shouldReturnNoProfileWhenDniIsNotFound() {
+        Mono<Profile> profile = profileRepository.findByDni("71224455Z");
+
+        StepVerifier
+                .create(profile)
+                .expectNextCount(0)
+                .verifyComplete();
+    }
 }

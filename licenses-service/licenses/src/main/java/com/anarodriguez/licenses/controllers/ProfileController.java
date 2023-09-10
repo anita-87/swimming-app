@@ -11,13 +11,15 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @RestController
 @RequiredArgsConstructor
 public class ProfileController {
 
     public static final String PROFILE_PATH = "/profiles";
-    public static final String PROFILE_BY_LICENCE_TYPE = PROFILE_PATH + "/{licenceType}";
+    public static final String PROFILE_BY_LICENCE_TYPE = PROFILE_PATH + "/type/{licenceType}";
+    public static final String PROFILE_BY_DNI = PROFILE_PATH + "/{dni}";
 
     private static final Logger logger = LoggerFactory.getLogger(ProfileController.class);
 
@@ -29,5 +31,13 @@ public class ProfileController {
         return ResponseEntity
                 .ok()
                 .body(profileService.listProfilesByLicenceType(LicenceType.fromString(licenceType)));
+    }
+
+    @GetMapping(PROFILE_BY_DNI)
+    ResponseEntity<Mono<Profile>> getProfileByDni(@PathVariable("dni") String dni) {
+        logger.debug("Getting profile for dni " + dni);
+        return ResponseEntity
+                .ok()
+                .body(profileService.getProfile(dni));
     }
 }
