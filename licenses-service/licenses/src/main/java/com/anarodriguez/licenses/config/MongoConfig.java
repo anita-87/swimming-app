@@ -5,6 +5,7 @@ import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
 import com.mongodb.reactivestreams.client.MongoClient;
 import com.mongodb.reactivestreams.client.MongoClients;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.config.AbstractReactiveMongoConfiguration;
@@ -14,6 +15,24 @@ import static java.util.Collections.singletonList;
 @Configuration
 public class MongoConfig extends AbstractReactiveMongoConfiguration {
 
+    @Value("${mongodb.db}")
+    private String databaseName;
+
+    @Value("${mongodb.username}")
+    private String userName;
+
+    @Value("${mongodb.password}")
+    private String password;
+
+    @Value("${mongodb.host}")
+    private String host;
+
+    @Value("${mongodb.port}")
+    private int port;
+
+    @Value("${mongodb.authSource}")
+    private String authSource;
+
     @Bean
     public MongoClient mongoClient() {
         return MongoClients.create();
@@ -21,16 +40,16 @@ public class MongoConfig extends AbstractReactiveMongoConfiguration {
 
     @Override
     protected String getDatabaseName() {
-        return "profiles";
+        return databaseName;
     }
 
     @Override
     protected void configureClientSettings(MongoClientSettings.Builder builder) {
         builder.credential(MongoCredential.createCredential(
-                        "root", "admin", "example".toCharArray()))
+                        userName, authSource, password.toCharArray()))
                 .applyToClusterSettings(settings -> {
                     settings.hosts(singletonList(
-                            new ServerAddress("127.0.0.1", 27017)
+                            new ServerAddress(host, port)
                     ));
                 });
     }
