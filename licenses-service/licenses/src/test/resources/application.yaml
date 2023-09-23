@@ -3,3 +3,10 @@ de:
     mongodb:
       embedded:
         version: 4.0.2
+mongodb:
+  db: licenses-test
+  username: root
+  password: example
+  host: 127.0.0.1
+  port: 27017
+  authSource: admin
