@@ -34,10 +34,10 @@ public class ProfileController {
     }
 
     @GetMapping(PROFILE_BY_DNI)
-    ResponseEntity<Mono<Profile>> getProfileByDni(@PathVariable("dni") String dni) {
+    Mono<ResponseEntity<Profile>> getProfileByDni(@PathVariable("dni") String dni) {
         logger.debug("Getting profile for dni " + dni);
-        return ResponseEntity
-                .ok()
-                .body(profileService.getProfile(dni));
+        Mono<Profile> profile = profileService.getProfile(dni);
+        return profile.map(ResponseEntity::ok)
+                .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 }

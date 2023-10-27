@@ -59,4 +59,18 @@ class ProfileControllerIT {
                 .jsonPath("$.status").isEqualTo(HttpStatus.BAD_REQUEST.value())
                 .jsonPath("$.error").isEqualTo(HttpStatus.BAD_REQUEST.name());
     }
+
+    @Test
+    void testGetProfile() {
+        webTestClient
+                .get().uri(ProfileController.PROFILE_BY_DNI, "71224455A")
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .consumeWith(System.out::println)
+                .jsonPath("$.dni").isEqualTo("71224455A")
+                .jsonPath("$.firstName").isEqualTo("Ana")
+                .jsonPath("$.lastName").isEqualTo("Rodriguez Fernandez");
+
+    }
 }
